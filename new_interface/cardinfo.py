@@ -2,6 +2,7 @@
 import pygame
 import globals
 class CardInfo(pygame.sprite.Sprite):
+    """ class to display information about a card """
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.type = 'cardinfo'

@@ -26,10 +26,11 @@ class GameInformationPanel(pygame.sprite.Sprite):
     def hide(self):
         self.timer = threading.Timer(self.auto_hide_time, self.hide)
         self.show = False
-    def display(self,text):
+    def display(self,text, persistent=False):
         if self.show:
             self.text = text
             return
         self.text = text
         self.show = True
-        self.timer.start()
+        if not persistent:
+            self.timer.start()
