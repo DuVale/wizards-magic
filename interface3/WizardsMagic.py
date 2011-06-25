@@ -199,12 +199,12 @@ def start_game(cli=False):
     healthwindow.HealthWindowEnemy((175, 10)) #Окошко здоровья верхнего игрока
     healthwindow.HealthWindow((167, 557)) #Окошко здоровья нижнего игрока
     # Кнопки колод стихий первого игрока
-    elementbutton.WaterElementShower((246, 7))
-    elementbutton.FireElementShower((337, 7))
-    elementbutton.AirElementShower((419, 7))
-    elementbutton.EarthElementShower((509, 7))
-    elementbutton.LifeElementShower((590, 7))
-    elementbutton.DeathElementShower((668, 7))
+    elementbutton.WaterElementShower((246, 2))
+    elementbutton.FireElementShower((337, 2))
+    elementbutton.AirElementShower((419, 2))
+    elementbutton.EarthElementShower((509, 2))
+    elementbutton.LifeElementShower((590, 2))
+    elementbutton.DeathElementShower((668, 2))
     # Кнопки колод стихий второго игрока
     globals.water_element_button = elementbutton.WaterElementButton((11, 427))
     globals.fire_element_button = elementbutton.FireElementButton((56, 427))

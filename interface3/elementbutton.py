@@ -8,7 +8,7 @@ current_folder = os.path.dirname(os.path.abspath(__file__))
 class ElementShower(pygame.sprite.Sprite):
     def __init__(self):
         self.type = 'outer'
-        self.font = pygame.font.Font(current_folder+"/misc/Domestic_Manners.ttf", 12)
+        self.font = pygame.font.Font(current_folder+"/misc/Domestic_Manners.ttf", 15)
         self.init_text = self.font.render('',False,(0,0,0))
         pygame.sprite.Sprite.__init__(self)
     def draw(self):
