@@ -26,6 +26,9 @@ player1 = None
 player2 = None
 player_id = 0
 players = [[]]  #массив игроки. ID элемента - id игры .Элемент 0 - 1 игрок , элемент 1 - второй игрок
+players.append([])
+games_cards = [{}] #cards separated for every concurrent game
+games_cards.append({})
 opponent_disconnect = False
 #Каст с выбором цели
 cast_focus = False #включен ли режим

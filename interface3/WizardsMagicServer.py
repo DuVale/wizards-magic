@@ -46,11 +46,13 @@ import options
 #port = 7712
 sockets = [] #сокеты игроков
 sockets.append([])
+sockets.append([])
 connections = [] #подключения
+connections.append([])
 connections.append([])
 s = ""
 num_players = 0 #tangente: remove use of num_player for inconsistence
-game_id = 0 # идентификатор игры
+game_id = 1 # идентификатор игры game_id=0 reserved for single player
 
 class Connect(threading.Thread):
     def get_package(self):
@@ -105,19 +107,19 @@ class Connect(threading.Thread):
             query = self.get_package()
             if query['action'] == "join":
                 # init deck if it is a new game
-#                if num_players == 0: 
+                # if num_players == 0: 
                 if len(globals.players[self.game_id]) == 0: 
-                    cards.water_cards = list([c for c in cards.water_cards_deck])
-                    cards.fire_cards = list([c for c in cards.fire_cards_deck])
-                    cards.air_cards = list([c for c in cards.air_cards_deck]) 
-                    cards.earth_cards = list([c for c in cards.earth_cards_deck]) 
-                    cards.life_cards = list([c for c in cards.life_cards_deck]) 
-                    cards.death_cards = list([c for c in cards.death_cards_deck]) 
+                    globals.games_cards[self.game_id]['water'] = cards.water_cards_deck[:]
+                    globals.games_cards[self.game_id]['fire'] = cards.fire_cards_deck[:]
+                    globals.games_cards[self.game_id]['air'] = cards.air_cards_deck[:] 
+                    globals.games_cards[self.game_id]['earth'] = cards.earth_cards_deck[:]
+                    globals.games_cards[self.game_id]['life'] = cards.life_cards_deck[:] 
+                    globals.games_cards[self.game_id]['death'] = cards.death_cards_deck[:]
 
                 #num_players+=1
                 self.nickname = query['nickname']
                 print "Nick: ", self.nickname
-                globals.players[self.game_id].append(player.Player(cli=True))
+                globals.players[self.game_id].append(player.Player(self.game_id))
                 id = len(globals.players[self.game_id]) - 1
                 #globals.players[self.game_id][id].id = num_players   
                 globals.players[self.game_id][id].id = len(globals.players[self.game_id])
@@ -132,6 +134,7 @@ class Connect(threading.Thread):
                     sockets.append([])
                     connections.append([])
                     globals.players.append([])
+                    globals.games_cards.append({})                    
 #                    cards.water_cards = cards.water_cards_deck[:]
 #                    cards.fire_cards = cards.fire_cards_deck[:]
 #                    cards.air_cards = cards.air_cards_deck[:]
@@ -142,8 +145,8 @@ class Connect(threading.Thread):
 #                        gamer.get_mana()
 #                        gamer.get_cards()
                     deck_cards = []
-                    deck_cards.append({"water_cards": globals.players[self.game_id][0].water_cards.keys(),"fire_cards":globals.players[self.game_id][0].fire_cards.keys(), "air_cards":globals.players[self.game_id][0].air_cards.keys(),"earth_cards":globals.players[self.game_id][0].earth_cards.keys(), "life_cards":globals.players[self.game_id][0].life_cards.keys(), "death_cards":globals.players[self.game_id][0].death_cards.keys()})
-                    deck_cards.append({"water_cards": globals.players[self.game_id][1].water_cards.keys(),"fire_cards":globals.players[self.game_id][1].fire_cards.keys(), "air_cards":globals.players[self.game_id][1].air_cards.keys(),"earth_cards":globals.players[self.game_id][1].earth_cards.keys(), "life_cards":globals.players[self.game_id][1].life_cards.keys(), "death_cards":globals.players[self.game_id][1].death_cards.keys()})
+                    deck_cards.append({"water": globals.players[self.game_id][0].cards['water'].keys(),"fire":globals.players[self.game_id][0].cards['fire'].keys(), "air":globals.players[self.game_id][0].cards['air'].keys(),"earth":globals.players[self.game_id][0].cards['earth'].keys(), "life":globals.players[self.game_id][0].cards['life'].keys(), "death":globals.players[self.game_id][0].cards['death'].keys()})
+                    deck_cards.append({"water": globals.players[self.game_id][1].cards['water'].keys(),"fire":globals.players[self.game_id][1].cards['fire'].keys(), "air":globals.players[self.game_id][1].cards['air'].keys(),"earth":globals.players[self.game_id][1].cards['earth'].keys(), "life":globals.players[self.game_id][1].cards['life'].keys(), "death":globals.players[self.game_id][1].cards['death'].keys()})
                     for connection in connections[self.game_id]:
                         #p_id += 1
                         self.send(connection.sock,{"answ":200,"nicknames":[connections[self.game_id][0].nickname,connections[self.game_id][1].nickname] ,"action":"update","mana":[globals.players[self.game_id][0].get_mana_count(), globals.players[self.game_id][1].get_mana_count()], "deck_cards":deck_cards})

@@ -5,6 +5,7 @@ import sys
 import os
 import time
 import socket
+import sockets
 import WizardsMagicServer
 import globals
 from pygame.locals import *

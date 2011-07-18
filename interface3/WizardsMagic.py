@@ -74,49 +74,16 @@ def server_handler():
             #nickname_window.NicknameWindow((200,10), globals.player1)
             #nickname_window.NicknameWindow((200,400), globals.player2)
             #кидаем ману первому игроку
-            globals.player1.water_mana = gi['mana'][0][0]
-            globals.player1.fire_mana = gi['mana'][0][1]
-            globals.player1.air_mana = gi['mana'][0][2]
-            globals.player1.earth_mana = gi['mana'][0][3]
-            globals.player1.life_mana = gi['mana'][0][4]
-            globals.player1.death_mana = gi['mana'][0][5]
-            #кидаем ману второму игроку
-            globals.player2.water_mana = gi['mana'][1][0]
-            globals.player2.fire_mana = gi['mana'][1][1]
-            globals.player2.air_mana = gi['mana'][1][2]
-            globals.player2.earth_mana = gi['mana'][1][3]
-            globals.player2.life_mana = gi['mana'][1][4]
-            globals.player2.death_mana = gi['mana'][1][5]
+	    manas = ["water","fire","air","earth","life","death"]
+	    for i, element in enumerate(manas): 
+		globals.player1.mana[element] = gi['mana'][0][i]
+		globals.player2.mana[element] = gi['mana'][1][i]
             if globals.player2.cards_generated == 0 and globals.player1.cards_generated == 0:
                 print "Выдаем карты"
-                globals.player1.water_cards = gi['deck_cards'][0]['water_cards']
-                globals.player1.fire_cards = gi['deck_cards'][0]['fire_cards']
-                globals.player1.air_cards = gi['deck_cards'][0]['air_cards']
-                globals.player1.earth_cards = gi['deck_cards'][0]['earth_cards']
-                globals.player1.life_cards = gi['deck_cards'][0]['life_cards']
-                globals.player1.death_cards = gi['deck_cards'][0]['death_cards']
-                position = 0
-                for card in globals.player1.water_cards + globals.player1.fire_cards + globals.player1.air_cards + globals.player1.earth_cards + globals.player1.life_cards + globals.player1.death_cards:
-                    exec("globals.player1." + card.lower() + "= cards." + card + "()")
-                    exec("globals.player1." + card.lower() + ".position_in_deck = " + str(position))
-                    position += 1
-                    if position > 3:
-                        position = 0
+		globals.player1.get_cards(gi['deck_cards'][0])
                 globals.player1.cards_generated = True
                 #а теперь второму
-                globals.player2.water_cards = gi['deck_cards'][1]['water_cards']
-                globals.player2.fire_cards = gi['deck_cards'][1]['fire_cards']
-                globals.player2.air_cards = gi['deck_cards'][1]['air_cards']
-                globals.player2.earth_cards = gi['deck_cards'][1]['earth_cards']
-                globals.player2.life_cards = gi['deck_cards'][1]['life_cards']
-                globals.player2.death_cards = gi['deck_cards'][1]['death_cards']
-                position = 0
-                for card in globals.player2.water_cards + globals.player2.fire_cards + globals.player2.air_cards + globals.player2.earth_cards + globals.player2.life_cards + globals.player2.death_cards:
-                    exec("globals.player2." + card.lower() + "= cards." + card + "()")
-                    exec("globals.player2." + card.lower() + ".position_in_deck = " + str(position))
-                    position += 1
-                    if position > 3:
-                        position = 0
+		globals.player2.get_cards(gi['deck_cards'][1])
                 globals.player2.cards_generated = True
             globals.information_group.remove(globals.importantmessage)
             del globals.importantmessage
@@ -134,14 +101,14 @@ def server_handler():
                 exec("globals.cardbox" + str(gi['position']) + ".card.parent = globals.cardbox" + str(gi['position']))
                 exec("globals.cardbox" + str(gi['position']) + ".card.field = True")
                 exec("globals.cardbox" + str(gi['position']) + ".card.summon()")
-                exec('globals.player.' + tmp_card.element + '_mana -= ' + str(tmp_card.level)) #Отнимаем ману
+                globals.player.mana[tmp_card.element] -= tmp_card.level #Отнимаем ману
                 exec("globals.ccards_" + str(globals.player.id) + ".add(globals.cardbox" + str(gi['position']) + ".card)")
                 #exec("globals.ccards_2.add(globals.cardbox"+str(gi['position'])+".card)")
                 #print globals.player.id,tmp_card
             elif gi['type'] == 'magic':
                 #exec("tmp_card = cards." + gi['card'] + "()")
                 tmp_card = cards.links_to_cards[gi['card']]()
-                exec('globals.player.' + tmp_card.element + '_mana -= ' + str(tmp_card.level)) #Отнимаем ману
+                globals.player.mana[tmp_card.element] -= tmp_card.level #Отнимаем ману
                 globals.player.action_points = False #ставим запись, что ход сделан
                 tmp_card.player = globals.player
                 tmp_card.cast()
@@ -206,12 +173,12 @@ def start_game(cli=False,ai=False):
     #globals.background.fill((0, 0, 0))
     background_backup = globals.background.copy()
     #font.set_bold(0)
-    cards.water_cards = list([c for c in cards.water_cards_deck])
-    cards.fire_cards = list([c for c in cards.fire_cards_deck])
-    cards.air_cards = list([c for c in cards.air_cards_deck]) 
-    cards.earth_cards = list([c for c in cards.earth_cards_deck]) 
-    cards.life_cards = list([c for c in cards.life_cards_deck]) 
-    cards.death_cards = list([c for c in cards.death_cards_deck]) 
+    globals.games_cards[0]['water'] = cards.water_cards_deck[:]
+    globals.games_cards[0]['fire'] = cards.fire_cards_deck[:]
+    globals.games_cards[0]['air'] = cards.air_cards_deck[:]
+    globals.games_cards[0]['earth'] = cards.earth_cards_deck[:]
+    globals.games_cards[0]['life'] = cards.life_cards_deck[:] 
+    globals.games_cards[0]['death'] = cards.death_cards_deck[:]
     globals.player1 = player.Player1()
     globals.player2 = player.Player2()
     globals.player1.enemy = globals.player2

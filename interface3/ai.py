@@ -47,7 +47,7 @@ def select_cardbox():
                 return 0
 def select_card(enemy_card):
     player = globals.player
-    self_cards = player.water_cards.values() + player.fire_cards.values() + player.air_cards.values() + player.earth_cards.values() + player.life_cards.values() + player.death_cards.values()
+    self_cards = player.cards['water'].values() + player.cards['fire'].values() + player.cards['air'].values() + player.cards['earth'].values() + player.cards['life'].values() + player.cards['death'].values()
     random.shuffle(self_cards)
     item = None
     max_eff = 0

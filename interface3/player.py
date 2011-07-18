@@ -10,16 +10,16 @@ import ai
 current_folder = os.path.dirname(os.path.abspath(__file__))
 
 class Player(): #Прототип игрока
-    def __init__(self, cli=False):
+    def __init__(self, game_id=0):
         self.health = 50
         self.name = "player"
         self.action_points = True #Ходил игрок, или нет
+        self.game_id = game_id
         self.get_cards()
         self.mana = {}
         self.get_mana()
         self.element = "none"
         self.ai = False
-        self.cli = cli
         self.cards_generated = False
     def damage(self, damage, enemy, cast = False):
         self.health -= damage
@@ -42,77 +42,28 @@ class Player(): #Прототип игрока
                 self.mana[manas[mana_id]] = 25 - sum
     def get_mana_count(self): #просмотр кол-ва маны
         return [self.mana['water'], self.mana['fire'], self.mana['air'], self.mana['earth'], self.mana['life'], self.mana['death']]
-    def get_cards(self):
-        self.water_cards = {}
-        self.fire_cards = {}
-        self.air_cards = {}
-        self.earth_cards = {}
-        self.life_cards = {}
-        self.death_cards = {}
-        water_cards_for_sort = []
-        fire_cards_for_sort = []
-        air_cards_for_sort = []
-        earth_cards_for_sort = []
-        life_cards_for_sort = []
-        death_cards_for_sort = []
-        for i in xrange(0, 4):
-            #получаем карту элемента воды
-            randnum = random.randint(0, len(cards.water_cards)-1)
-            #self.water_cards[cards.links_to_cards[cards]]
-            self.water_cards[cards.water_cards[randnum]] = cards.links_to_cards[cards.water_cards[randnum]]()
-            water_cards_for_sort.append([self.water_cards[cards.water_cards[randnum]].level,self.water_cards[cards.water_cards[randnum]]])
-            #print cards.links_to_cardscards.water_cards[randnum])
-            #self.water_cards[cards.water_cards[randnum]].position_in_deck=i
-            cards.water_cards.remove(cards.water_cards[randnum])
-            #Элемент огня
-            randnum = random.randint(0, len(cards.fire_cards)-1)
-            self.fire_cards[cards.fire_cards[randnum]] = cards.links_to_cards[cards.fire_cards[randnum]]()
-            #self.fire_cards[cards.fire_cards[randnum]].position_in_deck=i
-            fire_cards_for_sort.append([self.fire_cards[cards.fire_cards[randnum]].level,self.fire_cards[cards.fire_cards[randnum]]])
-            cards.fire_cards.remove(cards.fire_cards[randnum])
-            #Элемент воздуха
-            randnum = random.randint(0, len(cards.air_cards)-1)
-            self.air_cards[cards.air_cards[randnum]] = cards.links_to_cards[cards.air_cards[randnum]]()
-            #self.air_cards[cards.air_cards[randnum]].position_in_deck=i
-            air_cards_for_sort.append([self.air_cards[cards.air_cards[randnum]].level,self.air_cards[cards.air_cards[randnum]]])
-            cards.air_cards.remove(cards.air_cards[randnum])
-            #Элемент земли
-            randnum = random.randint(0, len(cards.earth_cards)-1)
-            self.earth_cards[cards.earth_cards[randnum]] = cards.links_to_cards[cards.earth_cards[randnum]]()
-            #self.earth_cards[cards.earth_cards[randnum]].position_in_deck=i
-            earth_cards_for_sort.append([self.earth_cards[cards.earth_cards[randnum]].level,self.earth_cards[cards.earth_cards[randnum]]])
-            cards.earth_cards.remove(cards.earth_cards[randnum])
-            #Элемент жизни
-            randnum = random.randint(0, len(cards.life_cards)-1)
-            self.life_cards[cards.life_cards[randnum]] = cards.links_to_cards[cards.life_cards[randnum]]()
-            #self.life_cards[cards.life_cards[randnum]].position_in_deck=i
-            life_cards_for_sort.append([self.life_cards[cards.life_cards[randnum]].level,self.life_cards[cards.life_cards[randnum]]])
-            cards.life_cards.remove(cards.life_cards[randnum])
-            #Элемент смерти
-            randnum = random.randint(0, len(cards.death_cards)-1)
-            self.death_cards[cards.death_cards[randnum]] = cards.links_to_cards[cards.death_cards[randnum]]()
-            #self.death_cards[cards.death_cards[randnum]].position_in_deck=i
-            death_cards_for_sort.append([self.death_cards[cards.death_cards[randnum]].level,self.death_cards[cards.death_cards[randnum]]])
-            cards.death_cards.remove(cards.death_cards[randnum])
-        water_cards_for_sort.sort()
-        fire_cards_for_sort.sort()
-        air_cards_for_sort.sort()
-        earth_cards_for_sort.sort()
-        life_cards_for_sort.sort()
-        death_cards_for_sort.sort()
-        for i in xrange(0,4):
-            water_cards_for_sort[i][1].position_in_deck = i
-            fire_cards_for_sort[i][1].position_in_deck = i
-            air_cards_for_sort[i][1].position_in_deck = i
-            earth_cards_for_sort[i][1].position_in_deck = i
-            life_cards_for_sort[i][1].position_in_deck = i
-            death_cards_for_sort[i][1].position_in_deck = i
-        del water_cards_for_sort
-        del fire_cards_for_sort
-        del air_cards_for_sort
-        del earth_cards_for_sort
-        del life_cards_for_sort
-        del death_cards_for_sort
+    def get_cards(self, server_cards = None):
+        ''' server_cards = list of cards sent from remote server '''
+        self.cards = {}
+        cards_for_sort = {}
+        for element in ['water', 'fire', 'air', 'earth', 'life', 'death']: 
+            self.cards[element] = {}
+            cards_for_sort[element] = []
+            for i in xrange(0, 4):
+                #получаем карту элемента воды
+                if not server_cards: 
+                    randnum = random.randint(0, len(globals.games_cards[self.game_id][element])-1)
+                    card = globals.games_cards[self.game_id][element][randnum]
+                else:
+                    card = server_cards[element][i]
+                self.cards[element][card] = cards.links_to_cards[card]()
+                cards_for_sort[element].append([self.cards[element][card].level, self.cards[element][card]])
+                if not server_cards: 
+                    globals.games_cards[self.game_id][element].remove(card)
+            cards_for_sort[element].sort()
+            for i in xrange(0,4):
+                cards_for_sort[element][i][1].position_in_deck = i
+        del cards_for_sort
 class Player1(Player):
     def __init__(self):
         self.id = 1
