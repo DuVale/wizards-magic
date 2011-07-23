@@ -64,3 +64,4 @@ Nr | Card Name | Author | Source (URL) | Comment
 59 | armegeddon | xeranas
 60 | zeus | vidas sinkunas | - | -
 61 | leviathan | xeranas
+62 | red drake | xeranas
