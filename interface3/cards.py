@@ -1110,8 +1110,8 @@ if yes_pygame:
             Prototype.__init__(self)
         def turn(self):
             Prototype.turn(self)
-            if self.parent.player.mana['death'] >= 2:
-                self.parent.player.mana['death'] -= 2
+            if self.parent.player.mana['death']:
+                self.parent.player.mana['death'] -= 1
                 self.parent.player.mana['life'] += 2
         def spell_used(self, spell):
             if spell.element == 'death' and spell.player is self.parent.player:
